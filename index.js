@@ -59,12 +59,12 @@ async function run() {
   //).toArray()
   //console.log(result)
 
-  let result = await client.db('ClusterSyakir').collection('students').deleteOne(
-    {
-      name: 'Syakir'
-    }
-  ).toArray()
-  console.log(result)
+  //let result = await client.db('ClusterSyakir').collection('students').deleteOne(
+    //{
+      //name: 'Syakir'
+    //}
+  //).toArray()
+  //console.log(result)
 
 } finally {
     // Ensures that the client will close when you finish/error
