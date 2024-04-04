@@ -4,8 +4,52 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json())
 
+//new user
+app.post('/user register', async (req, res) => {   //request, response
+  //console.log(req.body)
+  // insertOne
+  //console.log('new user entry')
+  //client.db('ClusterSyakir').collection('users').insertOne({
+  let result = await client.db('maybank2u').collection('users').insertOne(
+  {  
+    username: req.body.username,
+    password: req.body.password,   
+    name: req.body.name,
+    email: req.body.email
+  })
+})
+console.log(req.params)
+//get user profile
+app.get('/user/:siapadia/:emaildia', async (req, res) => {   //request, response
+  //findOne
+  let result = await client.db('maybank2u').collection('users').insertOne(
+  {  
+    username: req.params.siapadia,
+    email: req.params.emaildia
+  })
+  //console.log('find user entry')
+console.log(req)
+})
+
+res.send(result)
+
+//update user account
+app.patch('/user', (req, res) => {   //request, response
+  // updateOne
+  console.log('update user entry')
+
+})
+
+//delete user account
+app.delete('/user', (req, res) => {   //request, response
+  //deleteOne
+  console.log('delete user entry')
+
+})
+
+
 app.get('/', (req, res) => {
-   res.send('Hello World!')
+   res.send('BERR 2423 Database and Cloud')
 })
 
 app.listen(port, () => {
