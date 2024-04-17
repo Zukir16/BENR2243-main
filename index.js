@@ -1,42 +1,66 @@
 const express = require('express')
 const app = express()
 const port = process.env.PORT || 3000;
+const bcrypt = require('bcrypt')	
 
 app.use(express.json())
 
 //new user
-app.post('/user register', async (req, res) => {   //request, response
+app.post('/user', async (req, res) => {   //request, response
   //console.log(req.body)
   // insertOne
   //console.log('new user entry')
   //client.db('ClusterSyakir').collection('users').insertOne({
-  let result = await client.db('maybank2u').collection('users').insertOne(
-  {  
-    username: req.body.username,
-    password: req.body.password,   
-    name: req.body.name,
-    email: req.body.email
-  })
+
+  const hash = bcrypt.hashSync(req.body.password, 10);
+  let result = await client.db('ClusterSyakir').collection('users').insertOne(
+    {  
+      username: req.body.username,
+      password: hash,//req.body.password,   
+      name: req.body.name,
+      email: req.body.email
+    }
+  );
+  res.send(result)
 })
-console.log(req.params)
+
+app.post('/login', async (req, res) => {   //request, response
+  // username: req.body.username
+  // password: req.body.password
+
+  // Step 1: Check if the username exists
+  let result = client .db('ClusterSyakir').collection('users').findOne({
+    username: req.body.username
+  })
+  if(!result) {
+    res.send("Username not found")
+  }  else {
+    // Step 2: Check if password correct
+    if (bcrypt.compare(req.body.password, result.password) == true) {
+      res.send("Login successful")
+    } else {
+      res.send("Password incorrect")
+    }
+  }
+  console.log(result)
+})
+//console.log(req.params)
 //get user profile
 app.get('/user/:siapadia/:emaildia', async (req, res) => {   //request, response
   //findOne
-  let result = await client.db('maybank2u').collection('users').insertOne(
+  let result = await client.db('ClusterSyakir').collection('users').insertOne(
   {  
     username: req.params.siapadia,
     email: req.params.emaildia
-  })
+  });
   //console.log('find user entry')
-console.log(req)
+  res.send(result);
 })
-
-res.send(result)
 
 //update user account
 app.patch('/user', (req, res) => {   //request, response
   // updateOne
-  console.log('update user entry')
+  console.log('update user profile')
 
 })
 
@@ -49,7 +73,7 @@ app.delete('/user', (req, res) => {   //request, response
 
 
 app.get('/', (req, res) => {
-   res.send('BERR 2423 Database and Cloud')
+   res.send('Ridhuwan Adalah Seorang Manusia Yang Baik Hati')
 })
 
 app.listen(port, () => {
@@ -75,8 +99,8 @@ async function run() {
     await client.connect();
     // Send a ping to confirm a successful connection
 
-    //await client.db("admin").command({ ping: 1 });
-    //console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    await client.db("admin").command({ ping: 1 });
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
     //let result = await client.db('ClusterSyakir').collection('students').insertOne({ 
       //name: "Syakir",
@@ -112,7 +136,6 @@ async function run() {
 
 } finally {
     // Ensures that the client will close when you finish/error
-    await client.close();
   }
 }
 run().catch(console.dir);
