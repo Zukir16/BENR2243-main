@@ -46,34 +46,59 @@ app.post('/login', async (req, res) => {   //request, response
 })
 //console.log(req.params)
 //get user profile
-app.get('/user/:siapadia/:emaildia', async (req, res) => {   //request, response
+//app.get('/user/:siapadia/:emaildia', async (req, res) => {   //request, response
   //findOne
-  let result = await client.db('ClusterSyakir').collection('users').insertOne(
-  {  
-    username: req.params.siapadia,
-    email: req.params.emaildia
-  });
+  //let result = await client.db('ClusterSyakir').collection('users').insertOne(
+  //{  
+    //username: req.params.siapadia,
+    //email: req.params.emaildia
+  //});
   //console.log('find user entry')
-  res.send(result);
+  //res.send(result);
+//})
+
+app.get('/user/:id', async (req, res) => {   //request, response
+  console.log(req.params.userId)
+  let result = await client.db('ClusterSyakir').collection('users').findOne(
+  {
+    _id : new ObjectId(req.params.id)
+    //name: req.params.name
+  })
+  res.send(result)
 })
 
 //update user account
-app.patch('/user', (req, res) => {   //request, response
+app.patch('/user/:id', async (req, res) => {   //request, response
   // updateOne
-  console.log('update user profile')
-
+  let result = await client.db('ClusterSyakir').collection('users').updateOne(
+  //console.log('update user profile')
+  {
+    _id : new ObjectId(req.params.id)
+  },
+  {
+    $set: { 
+      name: req.body.name,  
+    }
+  }
+  )
+  res.send(result)
 })
 
 //delete user account
-app.delete('/user', (req, res) => {   //request, response
+app.delete('/user/:id', async (req, res) => {   //request, response
   //deleteOne
-  console.log('delete user entry')
-
+  let result = await client.db('ClusterSyakir').collection('users').deleteOne(
+  //console.log('delete user entry')
+  {
+    _id : new ObjectId(req.params.id)
+  }
+  )
+  res.send(result)
 })
 
 
 app.get('/', (req, res) => {
-   res.send('Ridhuwan Adalah Seorang Manusia Yang Baik Hati')
+   res.send('Ridhuwan Dan Widad Dan Nikgy Dan Adib Hensem')
 })
 
 app.listen(port, () => {
