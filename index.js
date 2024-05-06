@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
 const port = process.env.PORT || 3000;
-const bcrypt = require('bcrypt')	
+const bcrypt = require('bcrypt')
 
 app.use(express.json())
 
@@ -29,19 +29,32 @@ app.post('/login', async (req, res) => {   //request, response
   // password: req.body.password
 
   // Step 1: Check if the username exists
-  let result = client .db('ClusterSyakir').collection('users').findOne({
+  let result = await client .db('ClusterSyakir').collection('users').findOne({
     username: req.body.username
   })
-  if(!result) {
-    res.send("Username not found")
-  }  else {
-    // Step 2: Check if password correct
-    if (bcrypt.compare(req.body.password, result.password) == true) {
-      res.send("Login successful")
-    } else {
-      res.send("Password incorrect")
+  //if(!result) {
+  //  res.send("Username not found")
+  //  else {
+  //  // Step 2: Check if password correct
+   // if (bcrypt.compare(req.body.password, result.password) == true) {
+   //   res.send("Login successful")
+   // } else {
+   //   res.send("Password incorrect")
+   // }
+  //}
+  if(result) {
+      // Step 2: Check if password correct
+      if (bcrypt.compareSync(req.body.password, result.password)) {
+        var token = jwt.sign({
+          _id: result._id,
+          username: result.username,
+        }, 'mysupersecretkey');
+        res.send(token)
+      } else {
+        res.status(401).send("Password incorrect")
+      }
     }
-  }
+
   console.log(result)
 })
 //console.log(req.params)
@@ -96,6 +109,9 @@ app.delete('/user/:id', async (req, res) => {   //request, response
   res.send(result)
 })
 
+app.post('/buy', async (req, res) => {   //request, response
+  console.log(req.headers)
+})
 
 app.get('/', (req, res) => {
    res.send('Ridhuwan Dan Widad Dan Nikgy Dan Adib Hensem')
